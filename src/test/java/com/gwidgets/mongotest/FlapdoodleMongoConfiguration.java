@@ -54,7 +54,12 @@ public class FlapdoodleMongoConfiguration implements InitializingBean, Disposabl
         return template;
     }
 
-    @Bean
+    /**
+     * @Bean intentionally commented out
+    * @Deprecated redundant but keep here as example
+    */
+    @Deprecated
+    // @Bean
     public MongoRepositoryFactoryBean mongoFactoryRepositoryBean(MongoTemplate template) {
         MongoRepositoryFactoryBean mongoDbFactoryBean = new MongoRepositoryFactoryBean(TransactionRepository.class);
         mongoDbFactoryBean.setMongoOperations(template);
