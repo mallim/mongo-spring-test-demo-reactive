@@ -16,7 +16,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(FlapdoodleMongoConfiguration.class)
+@Import(MongoTestServerConfiguration.class)
 @ExtendWith(SpringExtension.class)
 @DataMongoTest(excludeAutoConfiguration= {EmbeddedMongoAutoConfiguration.class})
 public class TransactionRepositoryTest {

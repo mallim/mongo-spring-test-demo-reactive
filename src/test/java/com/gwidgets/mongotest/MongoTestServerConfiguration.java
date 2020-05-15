@@ -1,5 +1,7 @@
 package com.gwidgets.mongotest;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -13,9 +15,10 @@ import java.net.InetSocketAddress;
 /**
  * mongo-java-server
  * https://github.com/bwaldvogel/mongo-java-server
+ * https://github.com/bwaldvogel/mongo-java-server/issues/125
  */
 @TestConfiguration
-public class BwaldvogelMongoConfiguration
+public class MongoTestServerConfiguration
 {
     @Bean
     public MongoTemplate mongoTemplate(MongoDbFactory mongoDbFactory) {
@@ -33,5 +36,10 @@ public class BwaldvogelMongoConfiguration
         MongoServer mongoServer = new MongoServer(new MemoryBackend());
         mongoServer.bind();
         return mongoServer;
+    }
+
+    @Bean(destroyMethod="close")
+    public MongoClient mongoClient(MongoServer mongoServer) {
+        return MongoClients.create("mongodb://" + mongoServer.getLocalAddress().getHostName() + ":" + mongoServer.getLocalAddress().getPort());
     }
 }
