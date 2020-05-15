@@ -1,36 +1,22 @@
 package com.gwidgets.mongotest;
 
 
-import com.mongodb.MongoClientURI;
-import com.mongodb.WriteConcern;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.repository.support.MongoRepositoryFactoryBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Import(FlapdoodleMongoConfiguration.class)
 @ExtendWith(SpringExtension.class)
 @DataMongoTest(excludeAutoConfiguration= {EmbeddedMongoAutoConfiguration.class})
 public class TransactionRepositoryTest {
@@ -61,7 +47,7 @@ public class TransactionRepositoryTest {
 
     }
 
-
+    @DisplayName("This is a test")
     @Test
     public void findSuccessfullOperationsForUserWithCreatedDateLessThanNowTest() {
         long now = System.currentTimeMillis();
@@ -75,51 +61,4 @@ public class TransactionRepositoryTest {
         assertThat(resultsPage).extracting("success").allMatch(sucessfull -> (Boolean)sucessfull == true);
     }
 
-    @Configuration
-    static class MongoConfiguration implements InitializingBean, DisposableBean {
-
-         MongodExecutable executable;
-
-        @Override
-        public void afterPropertiesSet() throws Exception {
-            String host = "localhost";
-            int port = 27019;
-
-            IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION)
-                    .net(new Net(host, port, Network.localhostIsIPv6()))
-                    .build();
-
-            MongodStarter starter = MongodStarter.getDefaultInstance();
-            executable = starter.prepare(mongodConfig);
-            executable.start();
-        }
-
-
-        @Bean
-        public MongoDbFactory factory() {
-            MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI("mongodb://localhost:27019/test_db"));
-            return mongoDbFactory;
-        }
-
-
-        @Bean
-        public MongoTemplate mongoTemplate(MongoDbFactory mongoDbFactory) {
-            MongoTemplate template = new MongoTemplate(mongoDbFactory);
-            template.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-            return template;
-        }
-
-        @Bean
-        public MongoRepositoryFactoryBean mongoFactoryRepositoryBean(MongoTemplate template) {
-            MongoRepositoryFactoryBean mongoDbFactoryBean = new MongoRepositoryFactoryBean(TransactionRepository.class);
-            mongoDbFactoryBean.setMongoOperations(template);
-
-            return mongoDbFactoryBean;
-        }
-
-        @Override
-        public void destroy() throws Exception {
-            executable.stop();
-        }
-    }
 }
