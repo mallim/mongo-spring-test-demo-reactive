@@ -6,31 +6,33 @@ import com.mongodb.DBObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.TestConstructor;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// @Import(MongoTestServerConfiguration.class)
-@Import(FlapdoodleMongoConfiguration.class)
-@ExtendWith(SpringExtension.class)
-@DataMongoTest(excludeAutoConfiguration= {EmbeddedMongoAutoConfiguration.class})
+// @SpringBootTest(classes = MongoTestServerConfiguration.class)
+@SpringBootTest(classes = FlapdoodleMongoConfiguration.class)
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class TransactionRepositoryTest {
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
+
+    private final  MongoTemplate mongoTemplate;
 
     private final static List<String> USER_ID_LIST = Arrays.asList("b2b1f340-cba2-11e8-ad5d-873445c542a2", "bd5dd3a4-cba2-11e8-9594-3356a2e7ef10");
 
     private static final Random RANDOM = new Random();
+
+    public TransactionRepositoryTest( TransactionRepository transactionRepository, MongoTemplate mongoTemplate )
+    {
+        this.transactionRepository = transactionRepository;
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @BeforeEach
     public void dataSetup() {
@@ -72,7 +74,7 @@ public class TransactionRepositoryTest {
             + " when save object using MongoDB template"
             + " then object is saved")
     @Test
-    public void test(@Autowired MongoTemplate mongoTemplate) {
+    public void test() {
         // given
         assertThat( mongoTemplate ).isNotNull();
 

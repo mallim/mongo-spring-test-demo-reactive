@@ -25,7 +25,7 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 @TestConfiguration
 public class FlapdoodleMongoConfiguration implements InitializingBean, DisposableBean
 {
-    MongodExecutable executable;
+    private MongodExecutable executable;
 
     @Override
     public void afterPropertiesSet() throws Exception {
