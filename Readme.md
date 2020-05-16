@@ -1,11 +1,4 @@
-# Spring Boot 2 with Embedded MongoDB
-
-## Branches
-
-| Branches | Description |
-| --- | --- |
-| master | No more @Autowire in JUnit Test Cases. Can run test cases until Spring Boot 2.2.7 |
-| initial-junit-5.2 | Original working version |
+# Spring Boot 2 with Embedded MongoDB (Reactive)
 
 ## Support
 

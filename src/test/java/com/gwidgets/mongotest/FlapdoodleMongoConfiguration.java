@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.repository.support.MongoRepositoryFactoryBean;
 
 /**
  * Flapdoodle Embedded MongoDB
@@ -52,19 +51,6 @@ public class FlapdoodleMongoConfiguration implements InitializingBean, Disposabl
         MongoTemplate template = new MongoTemplate(mongoDbFactory);
         template.setWriteConcern(WriteConcern.ACKNOWLEDGED);
         return template;
-    }
-
-    /**
-     * @Bean intentionally commented out
-    * @Deprecated redundant but keep here as example
-    */
-    @Deprecated
-    // @Bean
-    public MongoRepositoryFactoryBean mongoFactoryRepositoryBean(MongoTemplate template) {
-        MongoRepositoryFactoryBean mongoDbFactoryBean = new MongoRepositoryFactoryBean(TransactionRepository.class);
-        mongoDbFactoryBean.setMongoOperations(template);
-
-        return mongoDbFactoryBean;
     }
 
     @Override
